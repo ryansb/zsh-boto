@@ -11,6 +11,7 @@ Usage
 ====
 
 To install::
+
    $ cd .zsh
    $ git clone git://github.com/ryansb/zsh-boto.git
    $ echo "fpath=($fpath /home/user/.zsh/zsh-boto)
@@ -18,6 +19,7 @@ To install::
    compinit" >> ~/.zshrc
 
 To use::
+
    lss3 <TAB>
    elbadmin <TAB>
    elbadmin add <TAB>
