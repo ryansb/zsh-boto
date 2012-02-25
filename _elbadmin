@@ -1,0 +1,69 @@
+#compdef elbadmin
+#
+# Author: Ryan Brown
+# Description: ZSH completion for Boto's elbadmin command
+#
+# Copyright (c) 2011 Ryan Brown ryansb@csh.rit.edu
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions;
+
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+
+
+_elbadmin() {
+	#Declare all the variables we'll be using
+	local curcontext="$curcontext" state line
+	typeset -A opt_args
+
+	_arguments \
+		'1: :->action'\
+		'2: :->elb'\
+		'3: :->arg'
+
+	case $state in
+		action)
+			_arguments '1:Actions:( list ls delete get create add remove rm enable en disable addl rml )'
+			;;
+		elb)
+			case $words[2] in
+				delete | get | add | remove | rm | en | enable | disable | addl | rml)
+					compadd "$@" `elbadmin list|tail -n +4|cut -d' ' -f1`
+					;;
+			esac
+			;;
+		arg)
+			case $words[2] in
+				add | remove)
+					#Execute a disturbingly complex python command to grab strings
+					#of all instance IDs
+					compadd "$@" `python -c "import boto
+for id in [i.id for i in reduce(lambda x,y:
+	x+y, [r.instances for r in
+	boto.connect_ec2().get_all_instances()])]:
+	print id"`
+					;;
+				en | enable | disable)
+					#need to think of a way to complete availability zones
+					compadd "$@" ''
+					;;
+				esac
+			;;
+		esac
+	}
+
+	_elbadmin "$@"
