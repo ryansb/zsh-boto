@@ -28,10 +28,40 @@
 local curcontext="$curcontext" state line ret=1
 typeset -A opt_args
 
-#split string $FOO by /'s
-#FOO=(${(s:/:)FOO})
-
 #if there are no /'s in the path
-_arguments "*:Buckets:(`lss3`)"
+_lss3() {
+	#Declare all the variables we'll be using
+	local curcontext="$curcontext" state line
+	typeset -A opt_args
 
+	_arguments \
+		'*: :->bucket'
 
+	case $state in
+		bucket)
+			if [[ "$words[-1]" == *\/* ]] ; then
+				keys=`python -c "
+raw = '${words[-1]}'.split('/')
+bucket = raw[0]
+raw.remove(raw[0])
+prefix = '/'.join(raw)
+import boto
+s3 = boto.connect_s3()
+try:
+	b = s3.get_bucket(bucket)
+except:
+	print ""
+	exit()
+print '\n'.join([n.name for n in list(b.list(prefix=prefix, delimiter='/'))])
+"`
+				arg="1:Keys:( ${keys} )"
+				_arguments $arg
+			else
+				arg="1:Buckets:( `lss3` )"
+				_arguments $arg
+			fi
+			;;
+	esac
+}
+
+_lss3 "$@"
