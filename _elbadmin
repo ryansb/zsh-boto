@@ -56,13 +56,13 @@ for id in [i.id for i in reduce(lambda x,y:
 	x+y, [r.instances for r in
 	boto.connect_ec2().get_all_instances()])]:
 	print id"`
-					;;
-				en | enable | disable)
-					#need to think of a way to complete availability zones
-					compadd "$@" ''
-					;;
+						;;
+					en | enable | disable)
+						#need to think of a way to complete availability zones
+						compadd "$@" ''
+						;;
 				esac
-			;;
+				;;
 		esac
 	}
 
