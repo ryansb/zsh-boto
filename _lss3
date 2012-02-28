@@ -52,13 +52,12 @@ try:
 except:
 	print ""
 	exit()
-print '\n'.join([n.name for n in list(b.list(prefix=prefix, delimiter='/'))])
+for n in [n.name for n in list(b.list(prefix=prefix, delimiter='/'))]:
+	print bucket + '/' + n
 "`
-				arg="1:Keys:( ${keys} )"
-				_arguments $arg
+				_arguments "1:Keys:( $keys )"
 			else
-				arg="1:Buckets:( `lss3` )"
-				_arguments $arg
+				_arguments "1:Buckets:( `lss3` )"
 			fi
 			;;
 	esac
