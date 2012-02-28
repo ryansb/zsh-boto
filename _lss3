@@ -57,7 +57,8 @@ for n in [n.name for n in list(b.list(prefix=prefix, delimiter='/'))]:
 "`
 				_arguments "1:Keys:( $keys )"
 			else
-				_arguments "1:Buckets:( `lss3` )"
+				for b in `lss3`; do opt+=("$b/"); done
+				_arguments "1:Buckets:( $opt )"
 			fi
 			;;
 	esac
